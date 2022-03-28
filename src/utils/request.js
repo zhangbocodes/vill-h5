@@ -21,24 +21,16 @@ export const request = (url, postData, options = {}) => {
     });
 };
 
-export async function auth() {
-    const response = await superagent(
-        'https://81.70.239.81/api/getuser',
-    );
-    const body = response.body || {};
-    return body;
-}
-
 export async function shibie(image) {
     return await request(
-        'http://192.168.3.146:8002/api/shibie',
+        'http://81.70.239.81/api/shibie',
         {image}
     );
 }
 
 export async function getTelephoneApi(idcard) {
     return await request(
-        'http://192.168.3.146:8002/api/getiphone',
+        'http://81.70.239.81/api/getiphone',
         {idcard}
     );
 }
@@ -46,7 +38,7 @@ export async function getTelephoneApi(idcard) {
 export async function addHistory(userid, area, data) {
     const {name, creditNumber, gender, age, birth, count, telephone} = data;
     return await request(
-        'http://192.168.3.146:8002/api/inserthistory',
+        'http://81.70.239.81/api/inserthistory',
         {
             name,
             sex: gender ? '女' : '男',
@@ -62,7 +54,7 @@ export async function addHistory(userid, area, data) {
 
 export async function logInApi(userName, password) {
     return await request(
-        'http://192.168.3.146:8002/api/verify',
+        'http://81.70.239.81/api/verify',
         {
             name: userName,
             password
@@ -72,7 +64,7 @@ export async function logInApi(userName, password) {
 
 export async function addUserApi({name, password, area}) {
     return await request(
-        'http://192.168.3.146:8002/api/insertuser',
+        'http://81.70.239.81/api/insertuser',
         {
             name,
             password,
@@ -89,7 +81,7 @@ export async function addAreaApi({area, level, level2Name, newArea}) {
         three: level === 3 ? newArea : ''
     };
     return await request(
-        'http://192.168.3.146:8002/api/insertcountry',
+        'http://81.70.239.81/api/insertcountry',
         params
     );
 }
