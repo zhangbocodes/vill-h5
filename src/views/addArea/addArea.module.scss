@@ -1,0 +1,9 @@
+@import '../../styles/index.scss';
+
+.add-user-btns {
+    display: flex;
+    justify-content: space-around;
+    button + button {
+        margin-left: 36px;
+    }
+}
