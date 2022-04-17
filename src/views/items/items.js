@@ -23,7 +23,6 @@ export function Items() {
     };
     return (
         <AutoCenter className={styles["items-page"]}>
-            <div className={styles.card} onClick={linkToAddArea} style={{backgroundColor: '#00b578'}}>新增区域</div>
             <div className={styles.card} onClick={linkToAddUser} style={{backgroundColor: '#00b578'}}>新增管理员</div>
             <div className={styles.card} onClick={linkToManagerList} style={{backgroundColor: '#00b578'}}>管理员列表</div>
             <div className={styles.card} onClick={linkToReport} style={{backgroundColor: '#00b578'}}>查看报告</div>

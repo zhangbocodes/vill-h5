@@ -1,10 +1,9 @@
-import {useState} from 'react';
+import { useEffect, useState } from "react";
 import {Form, Input, Button, CascadePicker, Toast, Dialog} from 'antd-mobile';
 import {useHistory} from 'react-router-dom';
-import {area1options} from '../../constants/constants';
 import styles from './addUser.module.scss';
 import queryString from "query-string";
-import {addUserApi} from "../../utils/request";
+import { addUserApi, getViils } from "../../utils/request";
 
 const checkPass = form => (rule, value) => {
     const pass2 = value;
@@ -20,6 +19,15 @@ export function AddUser() {
     const history = useHistory();
     const [visible, setVisible] = useState(false);
     const {uid} = queryString.parse(location.search);
+    const [vills, setVills] = useState([]);
+
+    useEffect(() => {
+        getViils().then(({data}) => {
+            const vills = data.map(v => ({value: v, label: v}));
+            setVills(vills);
+        });
+    }, []);
+
     const onSubmit = async () => {
         const values = await form.validateFields();
         try {
@@ -80,7 +88,7 @@ export function AddUser() {
             </Form>
             <CascadePicker
                 title='社区/村'
-                options={area1options}
+                options={vills}
                 visible={visible}
                 onClose={() => setVisible(false)}
                 onConfirm={(val) => {

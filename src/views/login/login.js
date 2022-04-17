@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import {useDispatch} from 'react-redux';
-import {Form, Input, Button, CascadePicker, Avatar, Dialog} from 'antd-mobile';
+import {Form, Input, Button, CascadePicker, Avatar, Dialog, Radio, Space} from 'antd-mobile';
 import {useHistory} from 'react-router-dom';
 import styles from './login.module.scss';
 import {setArea, setTimes} from '../../actions/actions';
 import { getAllAreas, logInApi } from "../../utils/request";
 import { Counter } from "../info/Count";
+
+const {alert} = Dialog;
 
 export function LoginPage() {
     const [form] = Form.useForm();
@@ -35,9 +37,7 @@ export function LoginPage() {
         try {
             result = await logInApi(name, password, area);
         } catch (e) {
-            Dialog.alert({
-                content: e.message
-            });
+            alert({ content: e.message });
             return;
         }
 
@@ -64,7 +64,8 @@ export function LoginPage() {
                     password: '',
                     area: '',
                     address: '',
-                    times: 1
+                    times: 1,
+                    role: 0
                 }}
                 footer={
                     <Button block type='submit' color='primary' size='middle' onClick={onSubmit}>
@@ -78,21 +79,39 @@ export function LoginPage() {
                 <Form.Item name='password' label='密码' rules={[{ required: true }]}>
                     <Input placeholder='请输入密码' type="password" />
                 </Form.Item>
-                <div onClick={() => setVisible(true)}>
-                    <Form.Item name='area' label='区域范围' rules={[{ required: true }]}>
-                        <Input placeholder='请选择区域范围' readOnly />
-                    </Form.Item>
-                </div>
-                {
-                    (_area[1] === '居民' || _area[1] === '组号') && (
-                      <Form.Item name='address' label='详细位置' rules={[{ required: true }]}>
-                        <Input placeholder='xx巷xx号/组号' />
-                      </Form.Item>
-                    )
-                }
-                <Form.Item name='times' label='检测轮次' rules={[{ required: true }]}>
-                    <Counter />
+                <Form.Item name='role' label='登录角色' rules={[{ required: true }]}>
+                    <Radio.Group>
+                        <Space>
+                            <Radio value={0}>管理员</Radio>
+                            <Radio value={1}>超级管理员</Radio>
+                        </Space>
+                    </Radio.Group>
                 </Form.Item>
+                <Form.Subscribe to={['role']}>
+                    {({role}) => {
+                        if (role === 0) {
+                            return (
+                              <>
+                                <div onClick={() => setVisible(true)}>
+                                  <Form.Item name='area' label='区域范围' rules={[{ required: true }]}>
+                                    <Input placeholder='请选择区域范围' readOnly />
+                                  </Form.Item>
+                                </div>
+                                {
+                                  (_area[1] === '居民' || _area[1] === '组号') && (
+                                    <Form.Item name='address' label='详细位置' rules={[{ required: true }]}>
+                                      <Input placeholder='xx巷xx号/组号' />
+                                    </Form.Item>
+                                  )
+                                }
+                                <Form.Item name='times' label='检测轮次' rules={[{ required: true }]}>
+                                  <Counter />
+                                </Form.Item>
+                              </>
+                            );
+                        }
+                    }}
+                </Form.Subscribe>
             </Form>
             <CascadePicker
                 title=''

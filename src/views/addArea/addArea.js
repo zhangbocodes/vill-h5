@@ -32,7 +32,6 @@ export function AddArea() {
     const [area2Visible, setArea2Visible] = useState(false);
     const onSubmit = async () => {
         const values = await form.validateFields();
-        console
         try {
             await addAreaApi(values);
             Toast.show({icon: 'success', content: '添加成功',})

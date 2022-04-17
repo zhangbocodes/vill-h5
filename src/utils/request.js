@@ -54,7 +54,7 @@ export async function addHistory(userid, data) {
     );
 }
 
-export async function logInApi(userName, password, area) {
+export async function logInApi(userName, password, area = '') {
     return await request(
         'http://81.70.239.81/api/verify',
         {
