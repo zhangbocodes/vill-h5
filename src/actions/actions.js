@@ -12,3 +12,16 @@ export function resetArea() {
         type: 'RESET_AREA'
     };
 }
+
+export function setTimes(times) {
+  return {
+    type: 'SET_TIMES',
+    times,
+  };
+}
+
+export function resetTimes() {
+  return {
+    type: 'RESET_TIMES'
+  };
+}

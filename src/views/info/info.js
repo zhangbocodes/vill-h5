@@ -1,6 +1,6 @@
 import queryString from 'query-string';
-import {useState} from 'react';
-import {Form, Input, Button, ImageUploader, Dialog, Toast, NavBar} from 'antd-mobile';
+import { useEffect, useState } from "react";
+import {Form, Input, Button, ImageUploader, Dialog, Toast, NavBar, CascadePicker} from 'antd-mobile';
 import {useSelector} from 'react-redux';
 import {Counter} from './Count';
 import {Birth} from './Birth';
@@ -8,24 +8,42 @@ import {Gender} from './Gender';
 // import IdCardCamera from './IdCardCamera';
 import {IdCard} from './IdCard';
 import styles from './info.module.scss';
-import {shibie, addHistory, getTelephoneApi} from '../../utils/request';
+import { shibie, addHistory, getTelephoneApi, getAllAreas } from "../../utils/request";
 import {startCompress} from "../../utils/compressBase64";
 import {getAge} from '../../utils';
 import {useHistory} from "react-router-dom";
 
-
+const {alert} = Dialog;
 
 export function Info() {
     const [form] = Form.useForm();
     const {uid, userName} = queryString.parse(location.search);
-    const area = useSelector(state => state.area);
+    const {area: initialArea, address: initialAddress} = useSelector(state => state.area);
+    const initialTimes = useSelector(state => state.times);
     const history = useHistory();
     const [isShibieLoading, setIsShibieLooading] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const _area = (form.getFieldValue('area') || '').split('/');
+    const [options, setOptions] = useState([]);
+
+    useEffect(() => {
+        getAllAreas().then(({data}) => {
+            const {cun_to_xiaoqu} = data;
+            const options = Object.keys(cun_to_xiaoqu).map((area1) => {
+                const item = {label: area1, value: area1};
+                item.children = cun_to_xiaoqu[area1][0]
+                    ? cun_to_xiaoqu[area1].map(area2 => ({label: area2, value: area2}))
+                    : [{label: '居民', value: '居民'}, {label: '组号', value: '组号'}];
+                return item;
+            });
+            setOptions(options);
+        });
+  }, []);
 
     const onSubmit = async () => {
         const values = await form.validateFields();
         try {
-            await addHistory(uid, area, values);
+            await addHistory(uid, values);
             Toast.show({icon: 'success', content: '录入成功',})
         } catch (e) {
             Dialog.alert({
@@ -57,7 +75,7 @@ export function Info() {
             result = await shibie(res);
         } catch (e) {
             setIsShibieLooading(false);
-            Dialog.alert({content: '自动识别失败'});
+            alert({content: '自动识别失败'});
             return;
         }
         setIsShibieLooading(false);
@@ -82,7 +100,7 @@ export function Info() {
 
     return (
         <div className={styles["info-page"]}>
-            <NavBar className={styles["info-page-nav"]} onBack={() => history.push(`/login`)} back="返回">
+            <NavBar className={styles["page-nav"]} onBack={() => history.push(`/login`)} back="返回">
                 管理员 - {userName}
             </NavBar>
             <div>
@@ -111,8 +129,10 @@ export function Info() {
                     gender: 0,
                     age: '',
                     birth: '',
-                    count: 1,
+                    count: initialTimes,
                     telephone: '',
+                    area: initialArea,
+                    address: initialAddress
                 }}
                 footer={
                     <div className={styles.footer}>
@@ -141,6 +161,18 @@ export function Info() {
                 <Form.Item name='birth' label='出生日期' rules={[{ required: true }]}>
                     <Birth form={form} />
                 </Form.Item>
+                <div onClick={() => setVisible(true)}>
+                    <Form.Item name='area' label='区域范围' rules={[{ required: true }]}>
+                        <Input placeholder='请选择区域范围' readOnly />
+                    </Form.Item>
+                </div>
+                {
+                    (_area[1] === '居民' || _area[1] === '组号') && (
+                        <Form.Item name='address' label='详细位置' rules={[{ required: true }]}>
+                            <Input placeholder='xx巷xx号/组号' />
+                        </Form.Item>
+                    )
+                }
                 <Form.Item name='count' label='检测次数' rules={[{ required: true }]}>
                     <Counter/>
                 </Form.Item>
@@ -148,6 +180,15 @@ export function Info() {
                     <Input placeholder='请输入手机号' type="tel" />
                 </Form.Item>
             </Form>
+            <CascadePicker
+                title=''
+                options={options}
+                visible={visible}
+                onClose={() => setVisible(false)}
+                onConfirm={(val) => {
+                    form.setFieldsValue({area: val.join('/')});
+                }}
+            />
         </div>
     );
 }

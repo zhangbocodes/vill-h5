@@ -6,6 +6,8 @@ import {Info} from '../views/info/info';
 import {Items} from '../views/items/items';
 import {AddUser} from '../views/addUser/addUser';
 import {AddArea} from '../views/addArea/addArea';
+import {UserList} from '../views/userList/userList';
+import {DownloadReport} from '../views/downloadReport';
 
 const Routes = () => {
     return (
@@ -17,6 +19,8 @@ const Routes = () => {
                 <Route path="/items" exact={true} component={Items} />
                 <Route path="/addUser" exact={true} component={AddUser} />
                 <Route path="/addArea" exact={true} component={AddArea} />
+                <Route path="/userList" exact={true} component={UserList} />
+                <Route path="/downloadReport" exact={true} component={DownloadReport} />
             </Switch>
         </Router>
     );

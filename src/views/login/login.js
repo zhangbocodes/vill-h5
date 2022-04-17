@@ -1,52 +1,39 @@
-import {useState} from 'react';
+import { useEffect, useState } from "react";
 import {useDispatch} from 'react-redux';
 import {Form, Input, Button, CascadePicker, Avatar, Dialog} from 'antd-mobile';
 import {useHistory} from 'react-router-dom';
 import styles from './login.module.scss';
-import {setArea} from '../../actions/actions';
-import {addHistory, logInApi} from '../../utils/request';
-
-const options = [
-    {
-        label: '浙江',
-        value: '浙江',
-        children: [
-            {
-                label: '杭州',
-                value: '杭州',
-            },
-            {
-                label: '宁波',
-                value: '宁波',
-            },
-        ],
-    },
-    {
-        label: '江苏',
-        value: '江苏',
-        children: [
-            {
-                label: '南京',
-                value: '南京',
-            },
-            {
-                label: '苏州',
-                value: '苏州',
-            },
-        ],
-    },
-];
+import {setArea, setTimes} from '../../actions/actions';
+import { getAllAreas, logInApi } from "../../utils/request";
+import { Counter } from "../info/Count";
 
 export function LoginPage() {
     const [form] = Form.useForm();
     const history = useHistory();
     const dispatch = useDispatch();
     const [visible, setVisible] = useState(false);
+    const [options, setOptions] = useState([]);
+    const _area = (form.getFieldValue('area') || '').split('/');
+
+    useEffect(() => {
+        getAllAreas().then(({data}) => {
+            const {cun_to_xiaoqu} = data;
+            const options = Object.keys(cun_to_xiaoqu).map((area1) => {
+                const item = {label: area1, value: area1};
+                item.children = cun_to_xiaoqu[area1][0]
+                    ? cun_to_xiaoqu[area1].map(area2 => ({label: area2, value: area2}))
+                    : [{label: '居民', value: '居民'}, {label: '组号', value: '组号'}];
+                return item;
+            });
+            setOptions(options);
+        });
+    }, []);
+
     const onSubmit = async () => {
-        const {name, password, area, address} = await form.validateFields();
+        const {name, password, area, address, times} = await form.validateFields();
         let result;
         try {
-            result = await logInApi(name, password);
+            result = await logInApi(name, password, area);
         } catch (e) {
             Dialog.alert({
                 content: e.message
@@ -59,7 +46,8 @@ export function LoginPage() {
         if (role === 1) {
             history.push(`/items?userName=${name}&uid=${userid}`);
         } else {
-            dispatch(setArea(`${area}/${address}`));
+            dispatch(setArea({area, address}));
+            dispatch(setTimes(times));
             history.push(`/info?userName=${name}&uid=${userid}`);
         }
     };
@@ -75,7 +63,8 @@ export function LoginPage() {
                     name: '',
                     password: '',
                     area: '',
-                    address: ''
+                    address: '',
+                    times: 1
                 }}
                 footer={
                     <Button block type='submit' color='primary' size='middle' onClick={onSubmit}>
@@ -94,8 +83,15 @@ export function LoginPage() {
                         <Input placeholder='请选择区域范围' readOnly />
                     </Form.Item>
                 </div>
-                <Form.Item name='address' label='详细位置'>
-                    <Input placeholder='xx巷xx号' />
+                {
+                    (_area[1] === '居民' || _area[1] === '组号') && (
+                      <Form.Item name='address' label='详细位置' rules={[{ required: true }]}>
+                        <Input placeholder='xx巷xx号/组号' />
+                      </Form.Item>
+                    )
+                }
+                <Form.Item name='times' label='检测轮次' rules={[{ required: true }]}>
+                    <Counter />
                 </Form.Item>
             </Form>
             <CascadePicker

@@ -1,0 +1,11 @@
+@import '../../styles/index.scss';
+
+.download-page {
+    .footer {
+        display: flex;
+        justify-content: space-around;
+        button + button {
+            margin-left: remB(48);
+        }
+    }
+}

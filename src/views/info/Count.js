@@ -1,13 +1,9 @@
 import {Input, Picker} from "antd-mobile";
 import {useState} from "react";
 
-const columns = [[
-    { label: '第1次', value: 1 },
-    { label: '第2次', value: 2 },
-    { label: '第3次', value: 3 },
-    { label: '第4次', value: 4 },
-    { label: '第5次', value: 5 }
-]];
+const columns = [
+  Array.from(new Array(50), (_, i) => ({label: `第${i + 1}次`, value: i + 1}))
+];
 
 export function Counter({value, onChange}) {
     const [countVisible, setCountVisible] = useState(false);

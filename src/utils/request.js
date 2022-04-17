@@ -35,8 +35,8 @@ export async function getTelephoneApi(idcard) {
     );
 }
 
-export async function addHistory(userid, area, data) {
-    const {name, creditNumber, gender, age, birth, count, telephone} = data;
+export async function addHistory(userid, data) {
+    const {name, creditNumber, gender, age, birth, count, telephone, area, address} = data;
     return await request(
         'http://81.70.239.81/api/inserthistory',
         {
@@ -47,17 +47,20 @@ export async function addHistory(userid, area, data) {
             idcard: creditNumber,
             iphone: telephone,
             userid,
-            area
+            first: area.split('/')[0],
+            times: count,
+            two: address || area.split('/')[1]
         }
     );
 }
 
-export async function logInApi(userName, password) {
+export async function logInApi(userName, password, area) {
     return await request(
         'http://81.70.239.81/api/verify',
         {
             name: userName,
-            password
+            password,
+            first: area.split('/')[0]
         }
     );
 }
@@ -84,4 +87,32 @@ export async function addAreaApi({area, level, level2Name, newArea}) {
         'http://81.70.239.81/api/insertcountry',
         params
     );
+}
+
+export async function getUsers() {
+  return await request(
+    'http://81.70.239.81/api/getalluser',
+    {}
+  );
+}
+
+export async function getViils() {
+  return await request(
+    'http://81.70.239.81/api/getcun',
+    {}
+  );
+}
+
+export async function downloadApi({times, area}) {
+  return await request(
+    'http://81.70.239.81/api/download',
+    {times, cun: area}
+  );
+}
+
+export async function getAllAreas() {
+  return await request(
+    'http://81.70.239.81/api/getallcontent',
+    {}
+  );
 }
