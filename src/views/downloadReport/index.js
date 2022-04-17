@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import { useSelector } from "react-redux";
 import {Form, Input, Button, CascadePicker, Card, Dialog, NavBar, Tag} from 'antd-mobile';
 import {getViils, downloadApi} from '../../utils/request';
@@ -11,6 +11,7 @@ const {alert} = Dialog;
 export function DownloadReport() {
   const [form] = Form.useForm();
   const history = useHistory();
+  const ref = useRef();
   const initialTimes = useSelector(state => state.times);
   const [visible, setVisible] = useState(false);
   const [vills, setVills] = useState([]);
@@ -26,7 +27,6 @@ export function DownloadReport() {
 
   const onSubmit = submitType => async () => {
     const {area, times} = await form.validateFields();
-    const ref = window.open("url","_blank");
     let result;
     try {
       result = await downloadApi({area, times});
@@ -38,7 +38,8 @@ export function DownloadReport() {
     const {should_count, not_hesuan_count, done_cun_count, not_area_count, area_count, fileurl} = data;
     setCheckResults({should_count, not_hesuan_count, done_cun_count, not_area_count, area_count});
     if (submitType === 'download') {
-      ref.location = fileurl;
+      ref.current.href = fileurl;
+      ref.current.click();
     }
   };
   return (
@@ -83,6 +84,7 @@ export function DownloadReport() {
           </p>
         </Card>
       )}
+      <a href="" ref={ref} style={{visibility: 'hidden'}}>点击下载</a>
 
       <CascadePicker
         title=''
