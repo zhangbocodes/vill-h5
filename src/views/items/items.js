@@ -9,9 +9,6 @@ export function Items() {
     const linkToAddUser = () => {
         history.push(`/addUser?uid=${uid}`);
     };
-    const linkToAddArea = () => {
-        history.push(`/addArea?uid=${uid}`);
-    };
     const linkToManagerList = () => {
       history.push(`/userList?uid=${uid}`);
     };
@@ -19,7 +16,7 @@ export function Items() {
       history.push(`/downloadReport?uid=${uid}`);
     };
     const onLogout = () => {
-        history.push(`/login`);
+        history.push(`/home`);
     };
     return (
         <AutoCenter className={styles["items-page"]}>

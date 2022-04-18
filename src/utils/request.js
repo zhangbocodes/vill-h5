@@ -49,7 +49,8 @@ export async function addHistory(userid, data) {
             userid,
             first: area.split('/')[0],
             times: count,
-            two: address || area.split('/')[1]
+            two: area.split('/')[1],
+            three: address
         }
     );
 }
@@ -114,5 +115,12 @@ export async function getAllAreas() {
   return await request(
     'http://81.70.239.81/api/getallcontent',
     {}
+  );
+}
+
+export async function delUser(name) {
+  return await request(
+    'http://81.70.239.81/api/deluser',
+    {name}
   );
 }

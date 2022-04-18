@@ -18,12 +18,10 @@ const {alert} = Dialog;
 export function Info() {
     const [form] = Form.useForm();
     const {uid, userName} = queryString.parse(location.search);
-    const {area: initialArea, address: initialAddress} = useSelector(state => state.area);
-    const initialTimes = useSelector(state => state.times);
+    const {area: initialArea} = useSelector(state => state.area);
     const history = useHistory();
     const [isShibieLoading, setIsShibieLooading] = useState(false);
     const [visible, setVisible] = useState(false);
-    const _area = (form.getFieldValue('area') || '').split('/');
     const [options, setOptions] = useState([]);
 
     useEffect(() => {
@@ -31,9 +29,7 @@ export function Info() {
             const {cun_to_xiaoqu} = data;
             const options = Object.keys(cun_to_xiaoqu).map((area1) => {
                 const item = {label: area1, value: area1};
-                item.children = cun_to_xiaoqu[area1][0]
-                    ? cun_to_xiaoqu[area1].map(area2 => ({label: area2, value: area2}))
-                    : [{label: '居民', value: '居民'}, {label: '组号', value: '组号'}];
+                item.children = cun_to_xiaoqu[area1].map(area2 => ({label: area2, value: area2}));
                 return item;
             });
             setOptions(options);
@@ -129,10 +125,10 @@ export function Info() {
                     gender: 0,
                     age: '',
                     birth: '',
-                    count: initialTimes,
+                    count: 1,
                     telephone: '',
                     area: initialArea,
-                    address: initialAddress
+                    address: ''
                 }}
                 footer={
                     <div className={styles.footer}>
@@ -166,13 +162,9 @@ export function Info() {
                         <Input placeholder='请选择区域范围' readOnly />
                     </Form.Item>
                 </div>
-                {
-                    (_area[1] === '居民' || _area[1] === '组号') && (
-                        <Form.Item name='address' label='详细位置' rules={[{ required: true }]}>
-                            <Input placeholder='xx巷xx号/组号' />
-                        </Form.Item>
-                    )
-                }
+                <Form.Item name='address' label='详细位置' rules={[{ required: true }]}>
+                    <Input placeholder='xx巷xx号/组号' />
+                </Form.Item>
                 <Form.Item name='count' label='检测次数' rules={[{ required: true }]}>
                     <Counter/>
                 </Form.Item>

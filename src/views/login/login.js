@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import {useDispatch} from 'react-redux';
-import {Form, Input, Button, CascadePicker, Avatar, Dialog, Radio, Space} from 'antd-mobile';
+import {Form, Input, Button, CascadePicker, Avatar, Dialog, NavBar} from 'antd-mobile';
 import {useHistory} from 'react-router-dom';
 import styles from './login.module.scss';
-import {setArea, setTimes} from '../../actions/actions';
+import {setArea} from '../../actions/actions';
 import { getAllAreas, logInApi } from "../../utils/request";
-import { Counter } from "../info/Count";
 
 const {alert} = Dialog;
 
@@ -15,16 +14,13 @@ export function LoginPage() {
     const dispatch = useDispatch();
     const [visible, setVisible] = useState(false);
     const [options, setOptions] = useState([]);
-    const _area = (form.getFieldValue('area') || '').split('/');
 
     useEffect(() => {
         getAllAreas().then(({data}) => {
             const {cun_to_xiaoqu} = data;
             const options = Object.keys(cun_to_xiaoqu).map((area1) => {
                 const item = {label: area1, value: area1};
-                item.children = cun_to_xiaoqu[area1][0]
-                    ? cun_to_xiaoqu[area1].map(area2 => ({label: area2, value: area2}))
-                    : [{label: '居民', value: '居民'}, {label: '组号', value: '组号'}];
+                item.children = cun_to_xiaoqu[area1].map(area2 => ({label: area2, value: area2}));
                 return item;
             });
             setOptions(options);
@@ -32,7 +28,7 @@ export function LoginPage() {
     }, []);
 
     const onSubmit = async () => {
-        const {name, password, area, address, times} = await form.validateFields();
+        const {name, password, area} = await form.validateFields();
         let result;
         try {
             result = await logInApi(name, password, area);
@@ -44,84 +40,57 @@ export function LoginPage() {
         const {data} = result;
         const {role, userid} = data;
         if (role === 1) {
-            history.push(`/items?userName=${name}&uid=${userid}`);
+          alert({content: '请选择超级管理员登录'});
         } else {
-            dispatch(setArea({area, address}));
-            dispatch(setTimes(times));
+            dispatch(setArea({area}));
             history.push(`/info?userName=${name}&uid=${userid}`);
         }
     };
     return (
-        <div className={styles["login-page"]}>
+        <>
+          <NavBar className={styles["page-nav"]} onBack={() => history.push(`/home`)} back="返回">
+            管理员登录
+          </NavBar>
+          <div className={styles["login-page"]}>
             <div className={styles.header}>
-                <Avatar src='' style={{ '--border-radius': '50%' }} />
-                <div className={styles.text}>请登录</div>
+              <Avatar src='' style={{ '--border-radius': '50%' }} />
+              <div className={styles.text}>请登录</div>
             </div>
             <Form
-                form={form}
-                initialValues={{
-                    name: '',
-                    password: '',
-                    area: '',
-                    address: '',
-                    times: 1,
-                    role: 0
-                }}
-                footer={
-                    <Button block type='submit' color='primary' size='middle' onClick={onSubmit}>
-                        管理员登录
-                    </Button>
-                }
+              form={form}
+              initialValues={{
+                name: '',
+                password: '',
+                area: ''
+              }}
+              footer={
+                <Button block type='submit' color='primary' size='middle' onClick={onSubmit}>
+                  管理员登录
+                </Button>
+              }
             >
-                <Form.Item name='name' label='账号' rules={[{ required: true }]}>
-                    <Input placeholder='请输入账号' />
+              <Form.Item name='name' label='账号' rules={[{ required: true }]}>
+                <Input placeholder='请输入账号' />
+              </Form.Item>
+              <Form.Item name='password' label='密码' rules={[{ required: true }]}>
+                <Input placeholder='请输入密码' type="password" />
+              </Form.Item>
+              <div onClick={() => setVisible(true)}>
+                <Form.Item name='area' label='区域范围' rules={[{ required: true }]}>
+                  <Input placeholder='请选择区域范围' readOnly />
                 </Form.Item>
-                <Form.Item name='password' label='密码' rules={[{ required: true }]}>
-                    <Input placeholder='请输入密码' type="password" />
-                </Form.Item>
-                <Form.Item name='role' label='登录角色' rules={[{ required: true }]}>
-                    <Radio.Group>
-                        <Space>
-                            <Radio value={0}>管理员</Radio>
-                            <Radio value={1}>超级管理员</Radio>
-                        </Space>
-                    </Radio.Group>
-                </Form.Item>
-                <Form.Subscribe to={['role']}>
-                    {({role}) => {
-                        if (role === 0) {
-                            return (
-                              <>
-                                <div onClick={() => setVisible(true)}>
-                                  <Form.Item name='area' label='区域范围' rules={[{ required: true }]}>
-                                    <Input placeholder='请选择区域范围' readOnly />
-                                  </Form.Item>
-                                </div>
-                                {
-                                  (_area[1] === '居民' || _area[1] === '组号') && (
-                                    <Form.Item name='address' label='详细位置' rules={[{ required: true }]}>
-                                      <Input placeholder='xx巷xx号/组号' />
-                                    </Form.Item>
-                                  )
-                                }
-                                <Form.Item name='times' label='检测轮次' rules={[{ required: true }]}>
-                                  <Counter />
-                                </Form.Item>
-                              </>
-                            );
-                        }
-                    }}
-                </Form.Subscribe>
+              </div>
             </Form>
             <CascadePicker
-                title=''
-                options={options}
-                visible={visible}
-                onClose={() => setVisible(false)}
-                onConfirm={(val) => {
-                    form.setFieldsValue({area: val.join('/')});
-                }}
+              title=''
+              options={options}
+              visible={visible}
+              onClose={() => setVisible(false)}
+              onConfirm={(val) => {
+                form.setFieldsValue({area: val.join('/')});
+              }}
             />
-        </div>
+          </div>
+        </>
     );
 }

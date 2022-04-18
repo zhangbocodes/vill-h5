@@ -2,19 +2,23 @@ import React from 'react';
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom';
 import Photo from '../views/photo/photo';
 import {LoginPage} from '../views/login/login';
+import {LoginPage as SuperLoginPage} from '../views/login/login2';
 import {Info} from '../views/info/info';
 import {Items} from '../views/items/items';
 import {AddUser} from '../views/addUser/addUser';
 import {AddArea} from '../views/addArea/addArea';
 import {UserList} from '../views/userList/userList';
 import {DownloadReport} from '../views/downloadReport';
+import {Home} from '../views/home';
 
 const Routes = () => {
     return (
         <Router>
             <Switch>
+                <Route path="/home" exact={true} component={Home} />
                 <Route path="/photo" exact={true} component={Photo} />
                 <Route path="/login" exact={true} component={LoginPage} />
+                <Route path="/superLogin" exact={true} component={SuperLoginPage} />
                 <Route path="/info" exact={true} component={Info} />
                 <Route path="/items" exact={true} component={Items} />
                 <Route path="/addUser" exact={true} component={AddUser} />
