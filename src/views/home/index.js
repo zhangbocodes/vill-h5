@@ -16,8 +16,8 @@ export function Home() {
         <div>全员核酸登记APP</div>
       </div>
       <div className={styles.btns}>
-        <div className={styles.card} onClick={toSuperLoginPage} style={{backgroundColor: '#3998fc'}}>超级管理员登录</div>
-        <div className={styles.card} onClick={toLoginPage} style={{backgroundColor: '#3998fc'}}>管理员登录</div>
+        <div className={styles.card} onClick={toSuperLoginPage} style={{backgroundColor: 'rgb(118 179 244)'}}>超级管理员登录</div>
+        <div className={styles.card} onClick={toLoginPage} style={{backgroundColor: 'rgb(118 179 244)'}}>管理员登录</div>
       </div>
     </div>
   );

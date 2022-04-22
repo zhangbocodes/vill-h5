@@ -96,7 +96,7 @@ export function Info() {
 
     return (
         <div className={styles["info-page"]}>
-            <NavBar className={styles["page-nav"]} onBack={() => history.push(`/login`)} back="返回">
+            <NavBar className={styles["page-nav"]} onBack={() => history.push(`/items_normal${location.search}`)} back="返回">
                 管理员 - {userName}
             </NavBar>
             <div>

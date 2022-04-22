@@ -43,7 +43,7 @@ export function LoginPage() {
           alert({content: '请选择超级管理员登录'});
         } else {
             dispatch(setArea({area}));
-            history.push(`/info?userName=${name}&uid=${userid}`);
+            history.push(`/items_normal?userName=${name}&uid=${userid}`);
         }
     };
     return (
