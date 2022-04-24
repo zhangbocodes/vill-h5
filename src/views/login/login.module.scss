@@ -1,7 +1,10 @@
 @import '../../styles/index.scss';
 
 .login-page {
-    margin: remB(120) 0;
+    padding: remB(120) 0;
+    background: url(../../resource/bg.jpeg) no-repeat;
+    background-size: cover;
+    height: 100vh;
     .header {
         display: flex;
         flex-direction: column;

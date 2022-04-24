@@ -162,7 +162,7 @@ export function Info() {
                         <Input placeholder='请选择区域范围' readOnly />
                     </Form.Item>
                 </div>
-                <Form.Item name='address' label='详细位置' rules={[{ required: true }]}>
+                <Form.Item name='address' label='详细位置'>
                     <Input placeholder='xx巷xx号/组号' />
                 </Form.Item>
                 <Form.Item name='count' label='检测次数' rules={[{ required: true }]}>
